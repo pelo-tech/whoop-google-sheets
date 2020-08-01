@@ -95,8 +95,10 @@ function whoop_get_incremental_history(){
   if (history.length>0){
     var firstDate=history[0][0];
     console.log("First Date: "+firstDate);
+    console.log("Date Strings :"+JSON.stringify(dateStrings));
     var idx=dateStrings.indexOf(firstDate);
     console.log("Found at index:"+idx);
+    console.log("History Length: "+history.length);
     whoopSheet.getRange(idx,1,history.length,colCount).setValues(history);
     var  confSheet = SpreadsheetApp.getActive().getSheetByName(CONFIG_SHEET_NAME);
     confSheet.getRange(LAST_UPDATED_CELL).setValue(new Date());
@@ -105,22 +107,61 @@ function whoop_get_incremental_history(){
 }
 
 
-
-function whoop_get_history(start_date, end_date){
-  whoop_refresh_token_if_needed();
-  var  whoopSheet = SpreadsheetApp.getActive().getSheetByName(WHOOP_SHEET_NAME);
+function whoop_get_heart_rate(start_date, end_date){
+  var interval=60;
+  // You can go for every 60 seconds, every 600 seconds (10 min) or every 6 seconds.
+  // Don't get too much data - this is a slow request - so keep the range very tight (1-2 days max!)
+  
+  if(start_date == null) {
+    start_date=new Date();
+    start_date.setDate(start_date.getDate()-1);
+  }
+  if(end_date==null) end_date=new Date();
+    
   var config=getConfigDetails();
+  var  whoopSheet = SpreadsheetApp.getActive().getSheetByName(HEART_RATE_SHEET_NAME);
+  var data=whoop_get_time_series("metrics/heart_rate",start_date, end_date, {sort:'t', step:interval});
+  // Data comes back as a values subarray for metrics calls;
+  data=data.values;
+  var rows=[];
+  rows[0]=["Timestamp", "Date", "Time", "Rate"];
+  console.log("Found "+data.length+"rows");
+  data.forEach(row => {
+               var d=new Date(row.time);
+               var rowArr=[
+                 row.time,
+                 Utilities.formatDate(d, config.whoop.timezone, "yyyy-MM-dd"),
+                 Utilities.formatDate(d, config.whoop.timezone, "HH:mm:ss"),
+                 row.data
+               ];
+               rows[rows.length]=rowArr;
+               });
 
+  whoopSheet.getRange(1, 1, rows.length, rows[0].length).setValues(rows);
+  whoopSheet.autoResizeRows(1,rows.length);
+  whoopSheet.autoResizeColumns(1,rows[0].length);
+}
+
+
+function whoop_get_time_series(series_name, start_date, end_date, params){
+  whoop_refresh_token_if_needed();
+  var config=getConfigDetails();
   var whoop=config.whoop;
   var timeZone = whoop.timezone;
   var start=Utilities.formatDate(start_date, timeZone, "yyyy-MM-dd'T'00:00:00.SSS'Z'");
   var end=Utilities.formatDate(end_date, timeZone, "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-  var url=whoop.http_base + "/users/"+ whoop.id +"/cycles?end="+end+"&start="+start;
+  var url=whoop.http_base + "/users/"+ whoop.id +"/"+series_name+"?end="+end+"&start="+start;
+  if(params) url+="&"+Object.keys(params).map(key => key + '=' + params[key]).join('&');
   console.log("URL:"+url);
   var json = UrlFetchApp.fetch(url,whoop.http_options).getContentText();
-   var data = JSON.parse(json);
-   var rows=[];
-  rows[0]=["Date","Strain","Recovery","Sleep Score","Sleep Duration","Workouts","HRV","RHR","Average HR","Max HR", "KJ", "Comment"];
+  var data = JSON.parse(json);
+  return data;
+}
+
+function whoop_get_history(start_date, end_date){
+  var data=whoop_get_time_series("cycles", start_date, end_date);
+  var rows=[];
+  rows[0]=["Date","Strain","Recovery","Sleep Score","Sleep Duration","Workouts","HRV","RHR","Average HR","Max HR", "KJ", "Comment", "Respitory Rate"];
   console.log(JSON.stringify(data[data.length-2]));
   data.forEach(row => {
 
@@ -136,7 +177,8 @@ function whoop_get_history(start_date, end_date){
                (row.strain)?row.strain.averageHeartRate:null,
                (row.strain)?row.strain.maxHeartRate:null,
                (row.strain)?row.strain.kilojoules:null,
-                 (row.during.upper == null)?"IN PROGRESS":null
+                 (row.during.upper == null)?"IN PROGRESS":null,
+                   (row.sleep && row.sleep.sleeps && row.sleep.sleeps.length>0 && row.sleep.sleeps[0].respiratoryRate)? row.sleep.sleeps[0].respiratoryRate:null
                ];
                
                     rows[rows.length]=rowArr;
