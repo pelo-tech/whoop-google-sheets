@@ -169,7 +169,7 @@ function dayOfWeek(dateString){
 function whoop_get_history(start_date, end_date){
   var data=whoop_get_time_series("cycles", start_date, end_date);
   var rows=[];
-  rows[0]=["Date","Strain","Recovery","Sleep Score","Sleep Duration","Workouts","HRV","RHR","Average HR","Max HR", "KJ", "Comment", "Respiratory Rate", "HRV (ms)",	"Sleep (hr)",	"Recovery Type", "Day of Week"];
+  rows[0]=["Date","Strain","Recovery","Sleep Score","Sleep Duration","Workouts","HRV","RHR","Average HR","Max HR", "KJ", "Comment", "Respiratory Rate", "HRV (ms)",	"Sleep (hr)",	"Recovery Type", "Day of Week","Calories"];
   console.log(JSON.stringify(data[data.length-2]));
   data.forEach(row => {
   
@@ -190,7 +190,8 @@ function whoop_get_history(start_date, end_date){
                (row.recovery)?row.recovery.heartRateVariabilityRmssd * 1000:null,
                (row.sleep)? row.sleep.qualityDuration / (1000*60*60) : null,
                (row.recovery)? (row.recovery.score>=67 ? "Green": (row.recovery.score>=34? "Yellow" : "Red")) :null,           
-               dayOfWeek(row.days[0])
+               dayOfWeek(row.days[0]),
+               (row.strain)?row.strain.kilojoules/4.184:null
                    ];
                
                     rows[rows.length]=rowArr;
