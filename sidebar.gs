@@ -9,7 +9,7 @@ function onOpen() {
 function handleSidebarSubmit(obj){
   var results={};
    if(!obj.username || obj.username.length < 5 ||
-      !obj.pasword  || obj.password.length <5 ) {
+      !obj.password  || obj.password.length <5 ) {
      return {"error":"Username and password are both required"};
    } 
   var results=handleLoginRequest(obj.username,obj.password);
