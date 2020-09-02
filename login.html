@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+  <head>
+ 
+    <base target="_top">
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  </head>
+  <body>
+
+ <div style="padding: 5px 5px 5px 5px;" id="response">Response Placeholder</div>
+ 
+<div class="card" style="width: 18rem;">
+  <div class="card-body">
+    <h5 class="card-title">Whoop Credentials</h5>
+    <h6 class="card-subtitle mb-2 text-muted">You will provide these once, but they will not be stored in your sheet. Only your session ID / Token used to make subsequent requests will be stored</h6>
+    <form id="myform">
+  <div class="form-group">
+    <label for="username">Email address (for Whoop Login)</label>
+    <input type="email" class="form-control" id="username" aria-describedby="emailHelp" placeholder="Enter email">
+  </div>
+  <div class="form-group">
+    <label for="password">Password</label>
+    <input type="password" class="form-control" id="password" placeholder="Password">
+  </div>
+  
+  <span   id="login" class="btn btn-primary">Login</span>
+</form>
+  </div>
+</div>
+
+
+
+<script>
+
+function displayAlert(_type, _title, _body){
+  console.log("displayAlert" +_title+"->"+_body);
+  $("#response").html("<div class='alert show alert-"+_type
+   +" fade' role='alert'><h4 class='alert-heading'>"
+   +_title+"</h4><p>"+_body+"</p></div>");
+}
+
+$("#login").click(function() {
+  $("input").prop("disabled",true);
+  $("#login").hide();
+   displayAlert(
+   "warning",
+   "Logging you in",
+   "Logging you into Whoop to obtain your tokens. This may take a few seconds"
+   );
+     google.script.run
+        .withSuccessHandler(handleResult)
+        .withFailureHandler(handleError)
+        .handleSidebarSubmit(
+             {
+              username: $("#username").val(), 
+              password:$("#password").val()
+             }
+         );
+});
+
+
+function handleResult(result) { 
+
+   if(result && result.access_token){
+   $("#login").hide();
+   displayAlert(
+    "success",
+    "Logged In Successfully",
+    "You can now close this sidebar."
+    );
+
+} else {
+   $("input").prop("disabled",null);
+   $("#login").show();
+   displayAlert(
+    "danger",
+    "Login failed. ",
+    "We failed to log you in with the provided credentials. <br>Details: "+JSON.stringify(result)
+    );
+  }
+}
+
+function handleError(result){
+ $("input").prop("disabled",null);
+ $("#login").show();
+  displayAlert(
+   "danger",
+   "Error occurred. ",
+   "We experienced an error when trying to log you in with the provided credentials. <br>Details: "+JSON.stringify(result)
+   );
+ }
+
+$(document).ready(function(){
+    displayAlert(
+     "primary",
+     "Please log in",
+     "Enter whoop credentials to proceed");
+});
+
+
+</script>
+
+ 
+</body>
+</html>

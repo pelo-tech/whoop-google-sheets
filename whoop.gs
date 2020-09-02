@@ -6,14 +6,18 @@ function whoop_setup(){
     ui.alert("Whoop authentication cancelled.");
     return;
   }
-  
-  var now=new Date().getTime();
-  var data=whoop_login(credentials.username,credentials.password);
-  processWhoopToken(data);
+  handleLoginRequest(credentials.username, credentials.password)
   ui.alert("Your whoop tokens have been obtained and are stored on your CONFIG tab.");
 }
 
+function handleLoginRequest(username, password){
+  var data=whoop_login(username,password);
+  processWhoopToken(data);
+  return data;
+}
+
 function processWhoopToken(data){
+  var now=new Date().getTime();
   var sheet = SpreadsheetApp.getActive().getSheetByName(CONFIG_SHEET_NAME);
   sheet.getRange(WHOOP_ACCESS_TOKEN_CELL).setValue(data.access_token); 
   sheet.getRange(WHOOP_REFRESH_TOKEN_CELL).setValue(data.refresh_token); 
@@ -27,6 +31,7 @@ function processWhoopToken(data){
   sheet.getRange(WHOOP_TOKEN_EXPIRY_READABLE).setValue(new Date(expires));
   sheet.getRange(WHOOP_TOKEN_LAST_REFRESH_READABLE).setValue(new Date(now));
   console.log("Token expires:"+new Date(expires));
+  return data;
 }
 
 function whoop_refresh_token_if_needed(force){
