@@ -1,10 +1,11 @@
 function onOpen() {
-  SpreadsheetApp.getUi()  
+   SpreadsheetApp.getUi()  
       .createMenu('Whoop')
       .addItem('Login', 'showSidebar')
+      .addItem('Reload Data', 'whoop_rebuild_history')
+      .addItem('Load Incremental', 'whoop_get_incremental_history')
       .addToUi();
 }
-
 
 function handleSidebarSubmit(obj){
   var results={};
@@ -21,7 +22,6 @@ function handleSidebarSubmit(obj){
   return  JSON.parse(JSON.stringify(results));
 }
 
-
 function showSidebar() {
   var html = HtmlService.createHtmlOutputFromFile('login.html')
       .setTitle('Whoop Login')
@@ -29,4 +29,5 @@ function showSidebar() {
   SpreadsheetApp.getUi() // Or DocumentApp or SlidesApp or FormApp.
       .showSidebar(html);
 }
+
 
