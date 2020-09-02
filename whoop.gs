@@ -158,13 +158,21 @@ function whoop_get_time_series(series_name, start_date, end_date, params){
   return data;
 }
 
+// this is optimized for google data studio ordered lists of day names
+function dayOfWeek(dateString){
+  var config=getConfigDetails();
+  var dt=new Date(dateString);
+  var weekday=Utilities.formatDate(dt,config.whoop.timezone,'EEE');
+  return dt.getDay()+ " "+weekday;
+}
+
 function whoop_get_history(start_date, end_date){
   var data=whoop_get_time_series("cycles", start_date, end_date);
   var rows=[];
-  rows[0]=["Date","Strain","Recovery","Sleep Score","Sleep Duration","Workouts","HRV","RHR","Average HR","Max HR", "KJ", "Comment", "Respitory Rate"];
+  rows[0]=["Date","Strain","Recovery","Sleep Score","Sleep Duration","Workouts","HRV","RHR","Average HR","Max HR", "KJ", "Comment", "Respiratory Rate", "HRV (ms)",	"Sleep (hr)",	"Recovery Type", "Day of Week"];
   console.log(JSON.stringify(data[data.length-2]));
   data.forEach(row => {
-
+  
                var rowArr=[
                row.days[0],
                (row.strain)?row.strain.score:null,
@@ -177,9 +185,13 @@ function whoop_get_history(start_date, end_date){
                (row.strain)?row.strain.averageHeartRate:null,
                (row.strain)?row.strain.maxHeartRate:null,
                (row.strain)?row.strain.kilojoules:null,
-                 (row.during.upper == null)?"IN PROGRESS":null,
-                   (row.sleep && row.sleep.sleeps && row.sleep.sleeps.length>0 && row.sleep.sleeps[0].respiratoryRate)? row.sleep.sleeps[0].respiratoryRate:null
-               ];
+               (row.during.upper == null)?"IN PROGRESS":null,
+               (row.sleep && row.sleep.sleeps && row.sleep.sleeps.length>0 && row.sleep.sleeps[0].respiratoryRate)? row.sleep.sleeps[0].respiratoryRate:null,
+               (row.recovery)?row.recovery.heartRateVariabilityRmssd * 1000:null,
+               (row.sleep)? row.sleep.qualityDuration / (1000*60*60) : null,
+               (row.recovery)? (row.recovery.score>=67 ? "Green": (row.recovery.score>=34? "Yellow" : "Red")) :null,           
+               dayOfWeek(row.days[0])
+                   ];
                
                     rows[rows.length]=rowArr;
                });
