@@ -187,7 +187,7 @@ function whoop_get_history(start_date, end_date){
                (row.strain)?row.strain.kilojoules:null,
                (row.during.upper == null)?"IN PROGRESS":null,
                (row.sleep && row.sleep.sleeps && row.sleep.sleeps.length>0 && row.sleep.sleeps[0].respiratoryRate)? row.sleep.sleeps[0].respiratoryRate:null,
-               (row.recovery && row.recovery.heartRateVariabilityRmmsd)?row.recovery.heartRateVariabilityRmssd * 1000:null,
+               (row.recovery && row.recovery.heartRateVariabilityRmssd)?row.recovery.heartRateVariabilityRmssd * 1000:null,
                (row.sleep && row.sleep.qualityDuration)? row.sleep.qualityDuration / (1000*60*60) : null,
                (row.recovery && row.recovery.score )? (row.recovery.score>=67 ? "Green": (row.recovery.score>=34? "Yellow" : "Red")) :null,           
                dayOfWeek(row.days[0]),
