@@ -78,7 +78,7 @@ function handleResult(result) {
    displayAlert(
     "danger",
     "Login failed. ",
-    "We failed to log you in with the provided credentials. <br>Details: "+JSON.stringify(result)
+    "We failed to log you in with the provided credentials. <br>Details: "+(result&& result.error)?result.error:JSON.stringify(result)
     );
   }
 }
@@ -89,7 +89,7 @@ function handleError(result){
   displayAlert(
    "danger",
    "Error occurred. ",
-   "We experienced an error when trying to log you in with the provided credentials. <br>Details: "+JSON.stringify(result)
+   "We experienced an error when trying to log you in with the provided credentials. <br>Details: "+result.error?result.error:JSON.stringify(result)
    );
  }
 
