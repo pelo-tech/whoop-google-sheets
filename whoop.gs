@@ -72,6 +72,11 @@ function whoop_rebuild_history(){
   confSheet.getRange(RECORD_COUNT_CELL).setValue(rows.length-1);
 }
 
+function localDateString(dt){
+  var config=getConfigDetails();
+  return Utilities.formatDate(new Date(dt),config.whoop.timezone,'yyyy-MM-dd');
+}
+
 function whoop_get_incremental_history(){
   var config=getConfigDetails();
   var whoopSheet = SpreadsheetApp.getActive().getSheetByName(WHOOP_SHEET_NAME);
@@ -86,23 +91,25 @@ function whoop_get_incremental_history(){
   // Annlying Date Formatting requires us to stringify values
   var dateStrings=dateColumn.map(
     function(d,idx,arr){
-      return (typeof d!='object')?d:Utilities.formatDate(new Date(d),config.whoop.timezone,'yyyy-MM-dd');
+      return (typeof d!='object')?d:localDateString(d);
                        });
   
   var startDate=whoopSheet.getRange("A"+dateColumn.length).getValue();
   startDate=new Date(startDate);
   var endDate=new Date(); // now
+  console.log("Getting history from Start Date "+localDateString(startDate)+" to end date "+ localDateString(endDate));
   var history=whoop_get_history(startDate,endDate);
-  console.log("Last Value is "+startDate);
+  console.log("Last Value is "+localDateString(startDate));
   var colCount=history[0].length; // even if its headers
   history.shift(); // remove headers
   console.log("History Size: "+history.length-1);
   if (history.length>0){
     var firstDate=history[0][0];
-    console.log("First Date: "+firstDate);
+    console.log("First Date: "+localDateString(firstDate));
     console.log("Date Strings :"+JSON.stringify(dateStrings));
-    var idx=dateStrings.indexOf(firstDate);
-    console.log("Found at index:"+idx);
+    var idx=dateStrings.indexOf(localDateString(firstDate));
+    idx+=1 ; // correct index to be a 'row number'
+    console.log("Found at row number:"+idx);
     console.log("History Length: "+history.length);
     whoopSheet.getRange(idx,1,history.length,colCount).setValues(history);
     var  confSheet = SpreadsheetApp.getActive().getSheetByName(CONFIG_SHEET_NAME);
