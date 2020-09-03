@@ -7,3 +7,6 @@ https://docs.google.com/spreadsheets/d/1q9tU4tkBLUi6oFsdLsO9HnOuMC-TEkrBXNoNXvLQ
 The sheet is capable of renewing your Whoop Authentication session, and pulling down the latest 'cycles' data after the most recent completed day already in the spreadsheet.
 
 There are instructions on how to set up the sheet (which you should take a copy of on your own google drive) are on the 'Config' tab
+
+#Demo Video
+You can watch a demo video on how to set this up at: https://www.youtube.com/watch?v=x19G39cXkoM
