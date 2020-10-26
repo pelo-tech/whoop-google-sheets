@@ -119,8 +119,8 @@ function whoop_get_incremental_history(){
 }
 
 
-function whoop_get_heart_rate(start_date, end_date){
-  var interval=60;
+function whoop_get_heart_rate(start_date, end_date, interval){
+  if(interval==null) interval=60;
   // You can go for every 60 seconds, every 600 seconds (10 min) or every 6 seconds.
   // Don't get too much data - this is a slow request - so keep the range very tight (1-2 days max!)
   
@@ -152,6 +152,7 @@ function whoop_get_heart_rate(start_date, end_date){
   whoopSheet.getRange(1, 1, rows.length, rows[0].length).setValues(rows);
   whoopSheet.autoResizeRows(1,rows.length);
   whoopSheet.autoResizeColumns(1,rows[0].length);
+  return rows.length;
 }
 
 

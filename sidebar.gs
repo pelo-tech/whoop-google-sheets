@@ -4,6 +4,7 @@ function onOpen() {
       .addItem('Login', 'showSidebar')
       .addItem('Reload Data', 'whoop_rebuild_history')
       .addItem('Load Incremental', 'whoop_get_incremental_history')
+      .addItem('Load Heartrate Data', 'showHeartrateSidebar')
       .addToUi();
 }
 
@@ -31,3 +32,20 @@ function showSidebar() {
 }
 
 
+function showHeartrateSidebar() {
+  var html = HtmlService.createHtmlOutputFromFile('heartrate.html')
+      .setTitle('Heart Rate Lookup')
+      .setWidth(320);
+  SpreadsheetApp.getUi() // Or DocumentApp or SlidesApp or FormApp.
+      .showSidebar(html);
+}
+
+
+
+function loadHeartRate(startDate,endDate,granularity){
+  var  whoopSheet = SpreadsheetApp.getActive().getSheetByName(HEART_RATE_SHEET_NAME);
+  whoopSheet.clear();
+ var result=whoop_get_heart_rate(new Date(startDate), new Date(endDate), granularity);
+  SpreadsheetApp.getUi().alert("Heart Rate data processed: "+result+ " measurements loaded into the Heart Rate tab");
+  return result;
+}

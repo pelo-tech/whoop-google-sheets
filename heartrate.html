@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Angular Material style sheet -->
+  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.12/angular-material.min.css">
+  <style>
+ 
+.datepickerdemoBasicUsage {
+  /** Demo styles for mdCalendar. */ }
+  .datepickerdemoBasicUsage md-content {
+    padding-bottom: 200px; }
+  .datepickerdemoBasicUsage .validation-messages {
+    font-size: 12px;
+    color: #dd2c00;
+    margin: 10px 0 0 25px; }
+    </style>
+</head>
+<body ng-app="datepickerBasicUsage" ng-cloak>
+  <!--
+    Your HTML content here
+  -->  
+  
+  <!-- Angular Material requires Angular.js Libraries -->
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-animate.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-aria.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-messages.min.js"></script>
+
+  <!-- Angular Material Library -->
+  <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.12/angular-material.min.js"></script>
+
+ <!-- Your application bootstrap  -->
+  <script type="text/javascript">    
+   
+    /**
+     * You must include the dependency on 'ngMaterial' 
+     */
+    angular.module('datepickerBasicUsage',
+    ['ngMaterial', 'ngMessages']).controller('AppCtrl', function($scope) {
+    var now=new Date();
+  $scope.options=[6,60,600];
+  $scope.granularity=60;
+  $scope.processing=false;
+  $scope.date = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  $scope.maxDate= new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  $scope.loadHR=function(){
+       $scope.processing=true;
+       google.script.run.withSuccessHandler(function(result){
+       google.script.host.close();
+     }).loadHeartRate($scope.date.getTime(), $scope.date.getTime()+1000*60*60*24, $scope.granularity);
+   };
+  
+ 
+  
+  $scope.notAfterToday = function(date) {  
+    return date.getTime() <= $scope.maxDate.getTime();
+  }
+});
+  </script>
+
+
+<div ng-controller="AppCtrl"  style='padding: 40px;' ng-cloak>
+  <md-content>
+    <h3>Heart Rate Lookup</h3>
+    <label>Seconds Granularity</label>
+     <md-select ng-model="granularity">
+          <md-option ng-repeat="o in options" value="{{o}}">{{o}} sec</md-option>
+        </md-select>
+        
+     <h4>Day to load</h4>
+     <md-datepicker ng-model="date" md-placeholder="Enter date"
+         md-date-filter="notAfterToday"
+        md-max-date="date"></md-datepicker>
+        
+    
+        
+        
+    <!--h4>With ngMessages</h4>
+    <form name="myForm">
+      <md-datepicker name="dateField" ng-model="myDate" md-placeholder="Enter date"
+          required md-min-date="minDate" md-max-date="maxDate"
+          md-date-filter="onlyWeekendsPredicate"></md-datepicker>
+      <div class="validation-messages" ng-messages="myForm.dateField.$error">
+        <div ng-message="valid">The entered value is not a date!</div>
+        <div ng-message="required">This date is required!</div>
+        <div ng-message="mindate">Date is too early!</div>
+        <div ng-message="maxdate">Date is too late!</div>
+        <div ng-message="filtered">Only weekends are allowed!</div>
+      </div>
+    </form-->
+    
+    
+          <md-button ng-if= "!processing" ng-click="loadHR()" class="md-raised md-primary">Load HR Data</md-button>
+      <md-progress-circular ng-if="processing" md-mode="indeterminate"></md-progress-circular>
+
+  </md-content>
+</div>
+
+  
+ 
+
+</body>
+</html>
