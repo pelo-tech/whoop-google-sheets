@@ -161,8 +161,8 @@ function whoop_get_time_series(series_name, start_date, end_date, params){
   var config=getConfigDetails();
   var whoop=config.whoop;
   var timeZone = whoop.timezone;
-  var start=Utilities.formatDate(start_date, timeZone, "yyyy-MM-dd'T'00:00:00.SSS'Z'");
-  var end=Utilities.formatDate(end_date, timeZone, "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+  var start=Utilities.formatDate(start_date, timeZone, DATETIME_FORMAT_START);
+  var end=Utilities.formatDate(end_date, timeZone, DATETIME_FORMAT_FULL);
   var url=whoop.http_base + "/users/"+ whoop.id +"/"+series_name+"?end="+end+"&start="+start;
   if(params) url+="&"+Object.keys(params).map(key => key + '=' + params[key]).join('&');
   console.log("URL:"+url);
@@ -182,7 +182,7 @@ function dayOfWeek(dateString){
 function whoop_get_history(start_date, end_date){
   var data=whoop_get_time_series("cycles", start_date, end_date);
   var rows=[];
-  rows[0]=["Date","Strain","Recovery","Sleep Score","Sleep Duration","Workouts","HRV","RHR","Average HR","Max HR", "KJ", "Comment", "Respiratory Rate", "HRV (ms)",	"Sleep (hr)",	"Recovery Type", "Day of Week","Calories"];
+  rows[0]=["Date","Strain","Recovery","Sleep Score","Sleep Duration","Workouts","HRV","RHR","Average HR","Max HR", "KJ", "Comment", "Respiratory Rate", "HRV (ms)",	"Sleep (hr)",	"Recovery Type", "Day of Week","Calories","Sleep Start","Sleep End"];
   console.log(JSON.stringify(data[data.length-2]));
   data.forEach(row => {
   
@@ -204,7 +204,9 @@ function whoop_get_history(start_date, end_date){
                (row.sleep && row.sleep.qualityDuration)? row.sleep.qualityDuration / (1000*60*60) : null,
                (row.recovery && row.recovery.score )? (row.recovery.score>=67 ? "Green": (row.recovery.score>=34? "Yellow" : "Red")) :null,           
                dayOfWeek(row.days[0]),
-               (row.strain && row.strain.kilojoules)?row.strain.kilojoules/4.184:null
+               (row.strain && row.strain.kilojoules)?row.strain.kilojoules/4.184:null,
+               (row.sleep && row.sleep.sleeps && row.sleep.sleeps.length>0 && row.sleep.sleeps[0].during)?new Date(row.sleep.sleeps[0].during.lower).getTime():null,
+               (row.sleep && row.sleep.sleeps && row.sleep.sleeps.length>0 && row.sleep.sleeps[0].during)?new Date(row.sleep.sleeps[0].during.upper).getTime():null,
                    ];
                
                     rows[rows.length]=rowArr;
