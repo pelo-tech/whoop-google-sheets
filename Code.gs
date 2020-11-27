@@ -12,6 +12,15 @@ function getConfigDetails(){
     history_size=60;
     cfg.getRange(HISTORY_LOAD_SIZE_CELL).setValue(history_size);
   }
+  
+  var weekday_type = cfg.getRange(WEEKDAY_TYPE_CELL).getValue();
+  if(![1,2,3].includes(weekday_type)){
+    // No weekday type specified. Let's go with 1.
+    weekday_type=1;
+  }  else {
+    weekday_type=WEEKDAY_TYPE_CELL_REFERENCE;
+  }
+
   return {
     "whoop":{
       "timezone" :tz,
@@ -21,6 +30,7 @@ function getConfigDetails(){
       "token_expiry": whoop_token_expiry,
       "username": whoop_username,
       "history_size": history_size,
+      "weekday_type": weekday_type,
       "id": whoop_id,
       "http_options":
       {
