@@ -25,3 +25,8 @@ var DATETIME_FORMAT_FULL="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 var DATETIME_FORMAT_START="yyyy-MM-dd'T'00:00:00.SSS'Z'";
 // Used to start at 0:00 on a given date
 var DATETIME_FORMAT_END="yyyy-MM-dd'T'23:59:59.999'Z'";
+
+
+var WEEKDAY_TYPE_CELL="B11"
+var WEEKDAY_TYPE_CELL_REFERENCE="INDIRECT(\""+CONFIG_SHEET_NAME+"!"+WEEKDAY_TYPE_CELL+"\")";
+
