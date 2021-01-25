@@ -184,7 +184,7 @@ function whoop_get_history(start_date, end_date){
   var config=getConfigDetails();
   var data=whoop_get_time_series("cycles", start_date, end_date);
   var rows=[];
-  rows[0]=["Date","Strain","Recovery","Sleep Score","Sleep Duration","Workouts","HRV","RHR","Average HR","Max HR", "KJ", "Comment", "Respiratory Rate", "HRV (ms)",	"Sleep (hr)",	"Recovery Type", "Day of Week","Calories","Sleep Start","Sleep End"];
+  rows[0]=["Date","Strain","Recovery","Sleep Score","Sleep Duration","Workouts","HRV","RHR","Average HR","Max HR", "KJ", "Comment", "Respiratory Rate", "HRV (ms)",	"Sleep (hr)",	"Recovery Type", "Day of Week","Calories","Sleep Start","Sleep End", "Bedtime", "Wakeup"];
   console.log(JSON.stringify(data[data.length-2]));
   data.forEach(row => {
   
@@ -209,6 +209,8 @@ function whoop_get_history(start_date, end_date){
                (row.strain && row.strain.kilojoules)?row.strain.kilojoules/4.184:null,
                (row.sleep && row.sleep.sleeps && row.sleep.sleeps.length>0 && row.sleep.sleeps[0].during)?new Date(row.sleep.sleeps[0].during.lower).getTime():null,
                (row.sleep && row.sleep.sleeps && row.sleep.sleeps.length>0 && row.sleep.sleeps[0].during)?new Date(row.sleep.sleeps[0].during.upper).getTime():null,
+               (row.sleep && row.sleep.sleeps && row.sleep.sleeps.length>0 && row.sleep.sleeps[0].during)?Utilities.formatDate( new Date(row.sleep.sleeps[0].during.lower), config.whoop.timezone, "HH:mm"):null,
+               (row.sleep && row.sleep.sleeps && row.sleep.sleeps.length>0 && row.sleep.sleeps[0].during)?Utilities.formatDate( new Date(row.sleep.sleeps[0].during.upper), config.whoop.timezone, "HH:mm"):null,
                    ];
                
                     rows[rows.length]=rowArr;
