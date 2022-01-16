@@ -1,10 +1,12 @@
 function onOpen() {
    SpreadsheetApp.getUi()  
-      .createMenu('Whoop')
-      .addItem('Login', 'showSidebar')
-      .addItem('Reload Data', 'whoop_rebuild_history')
-      .addItem('Load Incremental', 'whoop_get_incremental_history')
-      .addItem('Load Heartrate Data', 'showHeartrateSidebar')
+      .createMenu('📈 Whoop')
+      .addItem('🔒 Login', 'showSidebar')
+      .addItem('🔄 Reload Data (Legacy)', 'whoop_rebuild_history')
+      .addItem('📖 Load Incremental (Legacy)', 'whoop_get_incremental_history')
+      .addItem('🔄 Reload Data (⭐ New/V1)', 'v1_rebuild_history')
+      .addItem('📖 Load Incremental (⭐ New/V1)', 'v1_get_incremental_history')
+      .addItem('🫀 Load Heartrate Data', 'showHeartrateSidebar')
       .addToUi();
 }
 

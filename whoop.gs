@@ -72,8 +72,8 @@ function whoop_rebuild_history(){
   confSheet.getRange(RECORD_COUNT_CELL).setValue(rows.length-1);
 }
 
-function localDateString(dt){
-  var config=getConfigDetails();
+function localDateString(dt, config){
+  var config=config||getConfigDetails();
   return Utilities.formatDate(new Date(dt),config.whoop.timezone,'yyyy-MM-dd');
 }
 
@@ -212,7 +212,6 @@ function whoop_get_history(start_date, end_date){
                (row.sleep && row.sleep.sleeps && row.sleep.sleeps.length>0 && row.sleep.sleeps[0].during)?Utilities.formatDate( new Date(row.sleep.sleeps[0].during.lower), config.whoop.timezone, "HH:mm"):null,
                (row.sleep && row.sleep.sleeps && row.sleep.sleeps.length>0 && row.sleep.sleeps[0].during)?Utilities.formatDate( new Date(row.sleep.sleeps[0].during.upper), config.whoop.timezone, "HH:mm"):null,
                    ];
-               
                     rows[rows.length]=rowArr;
                });
 
