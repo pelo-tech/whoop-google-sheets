@@ -72,8 +72,8 @@ function whoop_rebuild_history(){
   confSheet.getRange(RECORD_COUNT_CELL).setValue(rows.length-1);
 }
 
-function localDateString(dt){
-  var config=getConfigDetails();
+function localDateString(dt, config){
+  var config=config||getConfigDetails();
   return Utilities.formatDate(new Date(dt),config.whoop.timezone,'yyyy-MM-dd');
 }
 
