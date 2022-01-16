@@ -71,6 +71,11 @@ function v1_consolidate_sleeps(sleepArr){
   }
 }
 
+function tzoffset_to_number(str){
+  if(typeof str==Number) return str;
+  else if((str||"").indexOf("+")>-1) str=parseInt(str.substring(1).replace(":",""));
+  return str;
+}
 function v1_result_to_row(result, config){
   var sleep=v1_consolidate_sleeps(result.sleeps);
   var recovery=result.recovery || {};
@@ -88,7 +93,7 @@ function v1_result_to_row(result, config){
                  cycle.scaled_strain,
                  sleep.sleep_need,
                  (sleep.sleep_need || 0) / (HOUR_IN_MS),
-                 cycle.timezone_offset,
+                 tzoffset_to_number(cycle.timezone_offset),
                  cycle.intensity_score,
                  cycle.data_state,
                  cycle.day_strain,
@@ -193,9 +198,9 @@ function v1_get_incremental_history(){
   var rows=cycles.sort((a,b)=>{  return  a[0]-b[0];});
   var dates=whoopSheet.getRange("A1:A").getValues();
 
-  console.log("Last Value is "+localDateString(startDate, config));
+  Logger.log("Last Value is "+localDateString(startDate, config));
   var colCount=cycles[0].length; // even if its headers
-  console.log("Cycles Found: "+cycles.length);
+  Logger.log("Cycles Found: "+cycles.length);
   if (cycles.length>0){
     var firstDate=cycles[0][0];
     Logger.log("First Date: "+localDateString(firstDate,config));
@@ -206,6 +211,6 @@ function v1_get_incremental_history(){
     whoopSheet.getRange(idx,1,cycles.length,colCount).setValues(cycles);
     var  confSheet = SpreadsheetApp.getActive().getSheetByName(CONFIG_SHEET_NAME);
     confSheet.getRange(LAST_UPDATED_CELL).setValue(new Date());
-    confSheet.getRange(RECORD_COUNT_CELL).setValue(whoopSheet.getRange("A1:A").getValues().length-1);
+    confSheet.getRange(RECORD_COUNT_CELL).setValue(whoopSheet.getDataRange().getNumRows()-1);
   }
 }
