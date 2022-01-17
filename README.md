@@ -15,5 +15,5 @@ The sheet is capable of renewing your Whoop Authentication session, and pulling 
 
 There are instructions on how to set up the sheet (which you should take a copy of on your own google drive) are on the 'Config' tab
 
-# Demo Video (Legacy version of the sheet)
-You can watch a demo video on how to set this up at: https://www.youtube.com/watch?v=x19G39cXkoM
+# Demo Video
+You can watch a demo video on how to set this up at: https://youtu.be/BbdoU6001Ns
