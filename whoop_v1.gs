@@ -64,7 +64,7 @@ function v1_consolidate_sleeps(sleepArr){
   else {
     var sleeps=sleepArr.filter(s=>s.is_nap==false);
     var naps=sleepArr.filter(s=>s.is_nap==true);
-    var sleep= sleeps[0] || {};
+    var sleep=sleeps.length?sleeps[0]:{};
     sleep.total_sleeps=sleeps.length;
     sleep.total_naps=naps.length;
     return sleep;
